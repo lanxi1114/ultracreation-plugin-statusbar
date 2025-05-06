@@ -205,6 +205,7 @@ public class StatusBar extends CordovaPlugin {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); // SDK 19-30
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS); // SDK 21
         window.setStatusBarColor(color);
+        window.setNavigationBarColor(color);
     }
 
     private void setStatusBarTransparent(final boolean isTransparent) {
@@ -217,6 +218,7 @@ public class StatusBar extends CordovaPlugin {
 
         if (isTransparent) {
             window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT);
         }
     }
 
