@@ -26,6 +26,7 @@
     <description>Ultracreation StatusBar Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,statusbar</keywords>
+    <repo>https://github.com/lanxi1114/ultracreation-plugin-statusbar.git</repo>
 
     <engines>
             <engine name="cordova" version=">=3.0.0" />
@@ -38,8 +39,6 @@
     </js-module>
 
     <platform name="android">
-        <source-file src="src/android/statusbar/StatusBar.java" target-dir="src/android/statusbar" />
-
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="StatusBar">
                 <param name="android-package" value="statusbar.StatusBar" />
@@ -47,6 +46,8 @@
             </feature>
             <preference name="StatusBarOverlaysWebView" value="true" />
         </config-file>
+
+        <source-file src="src/android/statusbar/StatusBar.java" target-dir="src/android/statusbar" />
     </platform>
 
     <platform name="browser">
