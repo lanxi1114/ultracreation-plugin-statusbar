@@ -10,7 +10,7 @@
       "ios"
     ]
   },
-  "repository": "github:apache/cordova-plugin-statusbar",
+  "repository": "https://github.com/lanxi1114/ultracreation-plugin-statusbar.git",
   "bugs": "https://github.com/apache/cordova-plugin-statusbar/issues",
   "keywords": [
     "cordova",
