@@ -46,11 +46,13 @@ public class StatusBar extends CordovaPlugin {
     private static final String ACTION_SHOW = "show";
     private static final String ACTION_READY = "_ready";
     private static final String ACTION_BACKGROUND_COLOR_BY_HEX_STRING = "backgroundColorByHexString";
+    private static final String ACTION_NAVIGATION_BACKGROUND_COLOR_BY_HEX_STRING = "navigationBackgroundColorByHexString";
     private static final String ACTION_OVERLAYS_WEB_VIEW = "overlaysWebView";
     private static final String ACTION_STYLE_DEFAULT = "styleDefault";
     private static final String ACTION_STYLE_LIGHT_CONTENT = "styleLightContent";
 
-    private static final String ACTION_HEIGHT = "getStatusBarHeight";
+    private static final String ACTION_STATUS_HEIGHT = "getStatusBarHeight";
+    private static final String ACTION_NAVIGATION_HEIGHT = "getNavigationBarHeight";
 
     private static final String STYLE_DEFAULT = "default";
     private static final String STYLE_LIGHT_CONTENT = "lightcontent";
@@ -147,6 +149,16 @@ public class StatusBar extends CordovaPlugin {
                 });
                 return true;
 
+            case ACTION_NAVIGATION_BACKGROUND_COLOR_BY_HEX_STRING:
+                activity.runOnUiThread(() -> {
+                    try {
+                        setNavigationBackgroundColor(args.getString(0));
+                    } catch (JSONException ignore) {
+                        LOG.e(TAG, "Invalid hexString argument, use f.i. '#777777'");
+                    }
+                });
+                return true;
+
             case ACTION_OVERLAYS_WEB_VIEW:
                 activity.runOnUiThread(() -> {
                     try {
@@ -165,10 +177,17 @@ public class StatusBar extends CordovaPlugin {
                 activity.runOnUiThread(() -> setStatusBarStyle(STYLE_LIGHT_CONTENT));
                 return true;
 
-            case ACTION_HEIGHT:
+            case ACTION_STATUS_HEIGHT:
                 activity.runOnUiThread(() -> {
-                    int statusBarHeight = getHeight();
+                    int statusBarHeight = getStatusBarHeight();
                     callbackContext.success(statusBarHeight);
+                });
+                return true;
+
+            case ACTION_NAVIGATION_HEIGHT:
+                activity.runOnUiThread(() -> {
+                    int navigationBarHeight = getNavigationBarHeight();
+                    callbackContext.success(navigationBarHeight);
                 });
                 return true;
 
@@ -177,7 +196,7 @@ public class StatusBar extends CordovaPlugin {
         }
     }
 
-    private int getHeight() {
+    private int getStatusBarHeight() {
         Context context = this.cordova.getActivity().getApplicationContext();
         int height = 0;
         int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -187,6 +206,20 @@ public class StatusBar extends CordovaPlugin {
 
         float density = context.getResources().getDisplayMetrics().density;
         LOG.e(TAG, "StatusBar: Height : " + height / density);
+        int real_height = Math.round(height / density);
+        return real_height;
+    }
+
+    private int getNavigationBarHeight() {
+        Context context = this.cordova.getActivity().getApplicationContext();
+        int height = 0;
+        int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            height = context.getResources().getDimensionPixelSize(resourceId);
+        }
+
+        float density = context.getResources().getDisplayMetrics().density;
+        LOG.e(TAG, "Navigationbar: Height : " + height / density);
         int real_height = Math.round(height / density);
         return real_height;
     }
@@ -205,6 +238,21 @@ public class StatusBar extends CordovaPlugin {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); // SDK 19-30
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS); // SDK 21
         window.setStatusBarColor(color);
+    }
+
+    private void setNavigationBackgroundColor(final String colorPref) {
+        if (colorPref.isEmpty()) return;
+
+        int color;
+        try {
+            color = Color.parseColor(colorPref);
+        } catch (IllegalArgumentException ignore) {
+            LOG.e(TAG, "Invalid hexString argument, use f.i. '#999999'");
+            return;
+        }
+
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); // SDK 19-30
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS); // SDK 21
         window.setNavigationBarColor(color);
     }
 
@@ -218,6 +266,19 @@ public class StatusBar extends CordovaPlugin {
 
         if (isTransparent) {
             window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT);
+        }
+    }
+
+    private void setNavigationBarTransparent(final boolean isTransparent) {
+        final Window window = cordova.getActivity().getWindow();
+        int visibility = isTransparent
+            ? View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            : View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_VISIBLE;
+
+        window.getDecorView().setSystemUiVisibility(visibility);
+
+        if (isTransparent) {
             window.setNavigationBarColor(Color.TRANSPARENT);
         }
     }

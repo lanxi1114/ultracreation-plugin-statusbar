@@ -74,6 +74,19 @@ var StatusBar = {
         exec(null, null, 'StatusBar', 'backgroundColorByHexString', [hexString]);
     },
 
+    navigationBackgroundColorByHexString: function (hexString) {
+        if (hexString.charAt(0) !== '#') {
+            hexString = '#' + hexString;
+        }
+
+        if (hexString.length === 4) {
+            var split = hexString.split('');
+            hexString = '#' + split[1] + split[1] + split[2] + split[2] + split[3] + split[3];
+        }
+
+        exec(null, null, 'StatusBar', 'navigationBackgroundColorByHexString', [hexString]);
+    },
+
     hide: function () {
         exec(null, null, 'StatusBar', 'hide', []);
         StatusBar.isVisible = false;
@@ -83,7 +96,6 @@ var StatusBar = {
         exec(null, null, 'StatusBar', 'show', []);
         StatusBar.isVisible = true;
     },
-
     getStatusBarHeight: function () {
         return new Promise((resolve, reject) => {
             exec(
@@ -96,6 +108,23 @@ var StatusBar = {
                 },
                 'StatusBar',
                 'getStatusBarHeight',
+                []
+            );
+        })
+    },
+
+    getNavigationBarHeight: function () {
+        return new Promise((resolve, reject) => {
+            exec(
+                (val) => {
+                    resolve(val);
+                },
+                (err) => {
+                    console.error(err);
+                    reject(0);
+                },
+                'StatusBar',
+                'getNavigationBarHeight',
                 []
             );
         })

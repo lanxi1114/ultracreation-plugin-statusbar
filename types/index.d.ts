@@ -53,6 +53,11 @@ interface StatusBar {
     backgroundColorByHexString(color: string): void;
 
     /**
+    * Sets the background color of the navigationsbar by a hex string.
+    */
+    navigationBackgroundColorByHexString(color: string): void;
+
+    /**
     * Hide the statusbar.
     */
     hide(): void;
@@ -61,6 +66,16 @@ interface StatusBar {
     * Show the statusbar.
     */
     show(): void;
+
+    /**
+    * Get statusbar height
+    */
+    getStatusBarHeight(): number;
+
+    /**
+    * Get navigationbar height
+    */
+    getNavigationBarHeight(): number;
 
     /**
     * Read this property to see if the statusbar is visible or not.
